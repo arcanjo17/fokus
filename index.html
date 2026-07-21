@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>fokus</title>
+  </head>
+  <body class="page">
+    <a href="#main-content" class="skip-link">Pular para o link príncipal</a>
+    <header>
+      <h1 class="logo">
+        <img src="/logo.png" alt="logo Fokus">
+      </h1>
+    </header>
+
+    <main id="main-content">
+      <section aria-label="Banner" class="banner">
+        <h2 class="banner__title">Otimize sua produtividade, <strong class="banner__title--highlight">mergulho no que importa</strong></h2>
+        <img src="/mode-1.png" alt="">
+      </section>
+
+      <section aria-label="Timer" class="timer-card">
+        <div role="tablist" aria-label="Tipo de timer" class="timer-card__tabs">
+          <button class="timer-card__tab timer-card__tab--active" role="tab" type="button" aria-selected="true">Foco</button>
+          <button class="timer-card__tab" role="tab" type="button" aria-selected="false">Descanso Curto</button>
+          <button class="timer-card__tab" role="tab" type="button" aria-selected="false">Descanso Longo</button>
+        </div>
+        <div class="timer-card__display">
+          <span role="timer" class="timer-card__time" aria-live="polite" aria-label="Tempo restante">00:25</span>
+        </div>
+        <label for="toggle-music" class="music-toggle">
+          <input type="checkbox" id="toggle-music" class="music-toggle__input">Música
+        </label>
+        <form class="timer-card__form">
+          <button class="button">Começar</button>
+        </form>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
