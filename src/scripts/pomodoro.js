@@ -12,7 +12,7 @@ tabs.forEach(tab => {
         console.log('novo modo: ', mode);
 
         tabs.forEach(tab => {
-            tab.disable = false
+            tab.disabled = false
             tab.classList.remove('timer-card__tab--active')
             tab.setAttribute('aria-selected', false)
         })
@@ -20,7 +20,7 @@ tabs.forEach(tab => {
         const modeImageSrc = `/mode-${mode}.png`
         modeImage.setAttribute('src', modeImageSrc)
         
-        event.currentTarget.disable = true
+        event.currentTarget.disabled = true
         event.currentTarget.classList.add('timer-card__tab--active')
         event.currentTarget.setAttribute('aria-selected', true)
     })
