@@ -6,10 +6,10 @@ let mode = 1
 
 tabs.forEach(tab => {
     tab.addEventListener('click', event => {
-        console.log('elemento clicado: ', event.currentTarget);
+        // console.log('elemento clicado: ', event.currentTarget);
         mode = event.currentTarget.dataset.mode
         page.dataset.mode = mode
-        console.log('novo modo: ', mode);
+        // console.log('novo modo: ', mode);
 
         tabs.forEach(tab => {
             tab.disabled = false
