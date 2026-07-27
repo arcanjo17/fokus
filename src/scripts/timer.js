@@ -6,4 +6,3 @@ const timerDisplay = document.querySelector('.timer-card__display')
 const timerForm = document.querySelector('.timer-card__form')
 const timerIcon = document.querySelector('.timer-card__form icon') 
 
-console.log(timerDisplay, timerForm, timerIcon);
