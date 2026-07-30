@@ -11,18 +11,32 @@ const context = {
 const timerDisplay = document.querySelector('.timer-card__display')
 const timerForm = document.querySelector('.timer-card__form')
 const timerIcon = document.querySelector('.timer-card__form .icon') 
+const button = document.querySelector('.button')
+
+let seconds = 0
+let intervalId = null
+
+function startTimer() {
+    button.lastChild.textContent = 'Pausar'
+    timerIcon.classList.replace('icon--pause', 'icon--play')
+    intervalId = setInterval(() => {
+        seconds ++
+        console.log('tempo: ', seconds)
+    },1000)
+    console.log('intervalId ', intervalId);
+}
+
+function pauseTimer() {
+    button.lastChild.textContent = 'Começar'
+    timerIcon.classList.replace('icon--play', 'icon--pause')
+}
 
 timerForm.addEventListener('submit', (event) => {
     event.preventDefault();
-    
-    let isRunning = timerIcon.classList.contains('icon--pause')
-
-    if (isRunning) {
-        timerIcon.classList.remove('icon--pause')
-        timerIcon.classList.add('icon--play')
+    if (intervalId) {
+        startTimer()
     } else {
-        timerIcon.classList.add('icon--pause')
-        timerIcon.classList.play('icon--play')
+        pauseTimer()
     }
 })
 
