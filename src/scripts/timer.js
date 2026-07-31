@@ -13,30 +13,44 @@ const timerForm = document.querySelector('.timer-card__form')
 const timerIcon = document.querySelector('.timer-card__form .icon') 
 const button = document.querySelector('.button')
 
-let seconds = 0
+const audio = new Audio('/sounds/ta-da.mp3')
+
+let currentMode = 1
+let remainingSeconds = FOCUS_TIME
 let intervalId = null
+let segundo = 0
 
 function startTimer() {
     button.lastChild.textContent = 'Pausar'
-    timerIcon.classList.replace('icon--pause', 'icon--play')
+    timerIcon.classList.replace('icon--play', 'icon--pause')
     intervalId = setInterval(() => {
-        seconds ++
-        console.log('tempo: ', seconds)
+        remainingSeconds--
+        segundo++
+        timerDisplay.textContent = formatTimer(remainingSeconds)
+        console.log('tempos: ', segundo);
+        
+        if (remainingSeconds < 0) {
+            pauseTimer()
+            resetTimer(currentMode)
+            audio.play()
+        }
     },1000)
     console.log('intervalId ', intervalId);
 }
 
 function pauseTimer() {
     button.lastChild.textContent = 'Começar'
-    timerIcon.classList.replace('icon--play', 'icon--pause')
+    timerIcon.classList.replace('icon--pause', 'icon--play')
+    clearInterval(intervalId)
+    intervalId = null
 }
 
 timerForm.addEventListener('submit', (event) => {
     event.preventDefault();
     if (intervalId) {
-        startTimer()
-    } else {
         pauseTimer()
+    } else {
+        startTimer()
     }
 })
 
@@ -51,6 +65,10 @@ function formatTimer(second) {
 }
 
 export function resetTimer(mode) {
-    const seconds = context[mode]
-    timerDisplay.textContent = formatTimer(seconds)
+    currentMode = mode
+    if (intervalId) {
+        pauseTimer()
+    }
+    remainingSeconds = context[mode]
+    timerDisplay.textContent = formatTimer(remainingSeconds)
 }
