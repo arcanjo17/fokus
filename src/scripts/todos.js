@@ -1,7 +1,28 @@
 const form = document.querySelector('.task-form')
 const todoList = document.querySelector('.task-list')
 
-const todos = [
+// encontrar botão de limpar concluidas
+const clearTarefaConcluidas = document.querySelector('.task-menu__button:has(.icon--check)')
+// econtrar botao de limpar todas
+const clearAll = document.querySelector('.task-menu__button:has(.icon--delete)')
+// encontrar menu
+const menu = document.querySelector('.task-menu')
+
+// add event listener do limpar concluidas
+clearTarefaConcluidas.addEventListener('click', () => {
+
+  // fechar o menu
+  menu.removeAttribute('open')
+})
+
+// add event listener do limpar todas
+clearAll.addEventListener('click', () => {
+
+  // fechar o menu
+  menu.removeAttribute('open')
+})
+
+let todos = [
   {
     id: 1,
     description: 'Fazer o exercício de JavaScript',
