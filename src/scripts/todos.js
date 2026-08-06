@@ -10,7 +10,7 @@ const menu = document.querySelector('.task-menu')
 
 // add event listener do limpar concluidas
 clearTarefaConcluidas.addEventListener('click', () => {
-
+  
   // fechar o menu
   menu.removeAttribute('open')
 })
