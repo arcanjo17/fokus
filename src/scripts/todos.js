@@ -7,20 +7,8 @@ const clearTarefaConcluidas = document.querySelector('.task-menu__button:has(.ic
 const clearAll = document.querySelector('.task-menu__button:has(.icon--delete)')
 // encontrar menu
 const menu = document.querySelector('.task-menu')
-
-// add event listener do limpar concluidas
-clearTarefaConcluidas.addEventListener('click', () => {
-
-  // fechar o menu
-  menu.removeAttribute('open')
-})
-
-// add event listener do limpar todas
-clearAll.addEventListener('click', () => {
-
-  // fechar o menu
-  menu.removeAttribute('open')
-})
+const addForm = document.querySelector('.add-task-button')
+const btnCancelAddForm = document.querySelector('#btn-cancel')
 
 let todos = [
   {
@@ -40,11 +28,38 @@ let todos = [
   }
 ]
 
+// add event listener do limpar concluidas
+clearTarefaConcluidas.addEventListener('click', () => {
+  todos = todos.filter(t => !t.completed)
+  todoList.innerHTML = ''
+  renderAll()
+  // fechar o menu
+  menu.removeAttribute('open')
+})
+
+// add event listener do limpar todas
+clearAll.addEventListener('click', () => {
+  todos = []
+  todoList.innerHTML = ''
+  // fechar o menu
+  menu.removeAttribute('open')
+})
+
+function toggleForm() {
+  form.hidden = !form.hidden
+  addForm.hidden = !addForm.hidden
+}
+
+addForm.addEventListener('click', toggleForm)
+btnCancelAddForm.addEventListener('click', () => {
+  toggleForm()
+  form.reset()
+})
+
 form.addEventListener('submit', (event) => {
   event.preventDefault()
 
   const formData = new FormData(form)
-
   const todo = {
     id: Date.now(),
     description: formData.get('task'),
@@ -53,13 +68,8 @@ form.addEventListener('submit', (event) => {
 
   const li = renderTodoListItem(todo)
   todoList.appendChild(li)
-
   todos.push(todo)
-
   form.reset()
-
-  console.log(todos);
-
 })
 
 function renderTodoListItem(todo) {
@@ -101,24 +111,12 @@ function renderTodoListItem(todo) {
   }
 
   return listItem
-
-  // return `
-  // <li class="task-list__item">
-  //         <button type="button" class="task-list__status" aria-pressed="true" aria-label="Marcar tarefa como pendente">
-  //           <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  //             <circle cx="12" cy="12" r="12" />
-  //             <path d="M9 16.1719L19.5938 5.57812L21 6.98438L9 18.9844L3.42188 13.4062L4.82812 12L9 16.1719Z" />
-  //           </svg>
-  //         </button>
-  //         <p class="task-list__description">${todo.description}</p>
-  //         <button type="button" class="task-list__edit" aria-label="Editar tarefa">
-  //           <span class="icon icon--edit icon--lg" aria-hidden="true"></span>
-  //         </button>
-  //       </li>
-  // `
 }
 
-todos.forEach(todo => {
-  const element = renderTodoListItem(todo)
-  todoList.appendChild(element)
-})
+function renderAll() {
+  todos.forEach(todo => {
+    const element = renderTodoListItem(todo)
+    todoList.appendChild(element)
+  })
+}
+renderAll()
