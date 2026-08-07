@@ -79,7 +79,7 @@
         <ul class="task-list">
         </ul>
   
-        <form class="task-form">
+        <form class="task-form" hidden>
           <label class="task-form__label" for="task-input">Adicionando tarefa</label>
           <textarea class="task-form__textarea" id="task-input" name="task" required
             placeholder="No que você está trabalhando?"></textarea>
@@ -89,7 +89,7 @@
               Deletar
             </button>
             <span class="task-form__spacer"></span>
-            <button type="button" class="task-form__button">
+            <button type="button" class="task-form__button" id="btn-cancel">
               <span class="icon icon--close icon--sm" aria-hidden="true"></span>
               Cancelar
             </button>
