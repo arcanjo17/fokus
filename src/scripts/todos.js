@@ -1,6 +1,10 @@
+let todosFromStorage = localStorage.getItem('todos')
+let todos = todosFromStorage ? JSON.parse(todosFromStorage) : []
 const form = document.querySelector('.task-form')
+const FormLabelEdit = document.querySelector('.task-form__label')
+const todoTextArea = document.querySelector('#task-input')
 const todoList = document.querySelector('.task-list')
-
+const buttonDelete = document.querySelector('#btn-delete')
 // encontrar botão de limpar concluidas
 const clearTarefaConcluidas = document.querySelector('.task-menu__button:has(.icon--check)')
 // econtrar botao de limpar todas
@@ -10,28 +14,21 @@ const menu = document.querySelector('.task-menu')
 const addForm = document.querySelector('.add-task-button')
 const btnCancelAddForm = document.querySelector('#btn-cancel')
 
-let todos = [
-  {
-    id: 1,
-    description: 'Fazer o exercício de JavaScript',
-    completed: true
-  },
-  {
-    id: 2,
-    description: 'Fazer o exercício de CSS',
-    completed: false
-  },
-  {
-    id: 3,
-    description: 'Fazer o exercício de HTML',
-    completed: false
-  }
-]
+let todoEdit = null
+
+buttonDelete.addEventListener('click', () => {
+    if (todoEdit) {
+      todos = todos.filter(t => t !== todoEdit)
+    }
+
+    resetFormState()
+    toggleForm()
+    renderAll()
+})
 
 // add event listener do limpar concluidas
 clearTarefaConcluidas.addEventListener('click', () => {
   todos = todos.filter(t => !t.completed)
-  todoList.innerHTML = ''
   renderAll()
   // fechar o menu
   menu.removeAttribute('open')
@@ -50,26 +47,40 @@ function toggleForm() {
   addForm.hidden = !addForm.hidden
 }
 
+//resetando o cancelar
+function resetFormState() {
+  form.reset()
+  FormLabelEdit.textContent = 'Adicionando tarefa'
+  todoEdit = null
+  buttonDelete.hidden = true
+}
+
 addForm.addEventListener('click', toggleForm)
+
 btnCancelAddForm.addEventListener('click', () => {
   toggleForm()
+  resetFormState()
   form.reset()
 })
 
 form.addEventListener('submit', (event) => {
   event.preventDefault()
-
   const formData = new FormData(form)
-  const todo = {
-    id: Date.now(),
-    description: formData.get('task'),
-    completed: false
+
+  if (todoEdit) {
+    todoEdit.description = formData.get('task')
+  } else {
+    const todo = {
+      id: Date.now(),
+      description: formData.get('task'),
+      completed: false
+    }
+    todos.push(todo)
   }
 
-  const li = renderTodoListItem(todo)
-  todoList.appendChild(li)
-  todos.push(todo)
-  form.reset()
+  renderAll()
+  toggleForm()
+  resetFormState()
 })
 
 function renderTodoListItem(todo) {
@@ -83,6 +94,11 @@ function renderTodoListItem(todo) {
   statusButton.classList.add('task-list__status')
   statusButton.setAttribute('aria-pressed', todo.completed)
 
+  statusButton.addEventListener('click', () => {
+    todo.completed = !todo.completed
+    renderAll()
+  })
+
   const statusIcon = document.createElement('img')
   statusIcon.src = todo.completed ? '/icons/check_circle.svg' : '/icons/check_circle_pending.svg'
 
@@ -94,6 +110,17 @@ function renderTodoListItem(todo) {
   editButton.type = 'button'
   editButton.classList.add('task-list__edit')
   editButton.setAttribute('aria-label', 'Editar tarefa')
+
+  editButton.addEventListener('click', () => {
+    if (form.hidden) {
+      toggleForm()
+    }
+    
+    buttonDelete.hidden = false
+    FormLabelEdit.textContent = 'Editando tarefa'
+    todoTextArea.value = todo.description
+    todoEdit = todo
+  })
 
   const span = document.createElement('span')
   span.classList.add('icon', 'icon--edit', 'icon--lg')
@@ -114,9 +141,12 @@ function renderTodoListItem(todo) {
 }
 
 function renderAll() {
+  localStorage.setItem('todos', JSON.stringify(todos))
+  todoList.innerHTML = ''
   todos.forEach(todo => {
     const element = renderTodoListItem(todo)
     todoList.appendChild(element)
   })
 }
+
 renderAll()
