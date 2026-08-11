@@ -1,5 +1,6 @@
-let todosFromStorage = localStorage.getItem('todos')
-let todos = todosFromStorage ? JSON.parse(todosFromStorage) : []
+// ==========================
+// 1. SELEÇÃO DE ELEMENTOS DOM
+// ==========================
 const form = document.querySelector('.task-form')
 const FormLabelEdit = document.querySelector('.task-form__label')
 const todoTextArea = document.querySelector('#task-input')
@@ -14,34 +15,16 @@ const menu = document.querySelector('.task-menu')
 const addForm = document.querySelector('.add-task-button')
 const btnCancelAddForm = document.querySelector('#btn-cancel')
 
+// ==========================
+// 2. ESTADO
+// ==========================
+let todosFromStorage = localStorage.getItem('todos')
+let todos = todosFromStorage ? JSON.parse(todosFromStorage) : []
 let todoEdit = null
 
-buttonDelete.addEventListener('click', () => {
-    if (todoEdit) {
-      todos = todos.filter(t => t !== todoEdit)
-    }
-
-    resetFormState()
-    toggleForm()
-    renderAll()
-})
-
-// add event listener do limpar concluidas
-clearTarefaConcluidas.addEventListener('click', () => {
-  todos = todos.filter(t => !t.completed)
-  renderAll()
-  // fechar o menu
-  menu.removeAttribute('open')
-})
-
-// add event listener do limpar todas
-clearAll.addEventListener('click', () => {
-  todos = []
-  todoList.innerHTML = ''
-  // fechar o menu
-  menu.removeAttribute('open')
-})
-
+// ==========================
+// 3. FUNÇÕES AUXILIARES
+// ==========================
 function toggleForm() {
   form.hidden = !form.hidden
   addForm.hidden = !addForm.hidden
@@ -55,34 +38,9 @@ function resetFormState() {
   buttonDelete.hidden = true
 }
 
-addForm.addEventListener('click', toggleForm)
-
-btnCancelAddForm.addEventListener('click', () => {
-  toggleForm()
-  resetFormState()
-  form.reset()
-})
-
-form.addEventListener('submit', (event) => {
-  event.preventDefault()
-  const formData = new FormData(form)
-
-  if (todoEdit) {
-    todoEdit.description = formData.get('task')
-  } else {
-    const todo = {
-      id: Date.now(),
-      description: formData.get('task'),
-      completed: false
-    }
-    todos.push(todo)
-  }
-
-  renderAll()
-  toggleForm()
-  resetFormState()
-})
-
+// ==========================
+// 4. FUNÇÕES DE RENDERIZAÇÃO
+// ==========================
 function renderTodoListItem(todo) {
 
   const listItem = document.createElement('li')
@@ -115,7 +73,7 @@ function renderTodoListItem(todo) {
     if (form.hidden) {
       toggleForm()
     }
-    
+
     buttonDelete.hidden = false
     FormLabelEdit.textContent = 'Editando tarefa'
     todoTextArea.value = todo.description
@@ -149,4 +107,64 @@ function renderAll() {
   })
 }
 
+// ==========================
+// 5. EVENT LISTENERS
+// ==========================
+addForm.addEventListener('click', toggleForm)
+
+btnCancelAddForm.addEventListener('click', () => {
+  toggleForm()
+  resetFormState()
+  form.reset()
+})
+
+buttonDelete.addEventListener('click', () => {
+  if (todoEdit) {
+    todos = todos.filter(t => t !== todoEdit)
+  }
+
+  resetFormState()
+  toggleForm()
+  renderAll()
+})
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault()
+  const formData = new FormData(form)
+
+  if (todoEdit) {
+    todoEdit.description = formData.get('task')
+  } else {
+    const todo = {
+      id: Date.now(),
+      description: formData.get('task'),
+      completed: false
+    }
+    todos.push(todo)
+  }
+
+  renderAll()
+  toggleForm()
+  resetFormState()
+})
+
+// add event listener do limpar concluidas
+clearTarefaConcluidas.addEventListener('click', () => {
+  todos = todos.filter(t => !t.completed)
+  renderAll()
+  // fechar o menu
+  menu.removeAttribute('open')
+})
+
+// add event listener do limpar todas
+clearAll.addEventListener('click', () => {
+  todos = []
+  todoList.innerHTML = ''
+  // fechar o menu
+  menu.removeAttribute('open')
+})
+
+// ==========================
+// 6. INICIALIZAÇÃO
+// ==========================
 renderAll()
