@@ -27,7 +27,7 @@ function startTimer() {
         remainingSeconds--
         segundo++
         timerDisplay.textContent = formatTimer(remainingSeconds)
-        console.log('tempos: ', segundo);
+        // console.log('tempos: ', segundo);
         
         if (remainingSeconds < 0) {
             pauseTimer()
@@ -35,7 +35,7 @@ function startTimer() {
             audio.play()
         }
     },1000)
-    console.log('intervalId ', intervalId);
+    // console.log('intervalId ', intervalId);
 }
 
 function pauseTimer() {
