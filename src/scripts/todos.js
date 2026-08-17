@@ -1,5 +1,17 @@
-let todosFromStorage = localStorage.getItem('todos')
-let todos = todosFromStorage ? JSON.parse(todosFromStorage) : []
+import { getTasks, createTask, updateTask } from "./task-api.js"
+
+let todos = []
+
+function loadTasks() {
+    getTasks()
+        .then(data => {
+            console.table(data);
+            todos = data
+            renderAll()
+        })
+}
+
+
 const taskBoard = document.querySelector('.task-board')
 const form = document.querySelector('.task-form')
 const formLabel = document.querySelector('.task-form__label')
@@ -51,16 +63,17 @@ function handleClearAll() {
 }
 
 function findTodoFromEvent(event) {
-    const todoId = Number(event.target.closest('[data-todo-id]')?.dataset.todoId)
+    const todoId = event.target.closest('[data-todo-id]')?.dataset.todoId
     return todos.find(t => t.id === todoId)
 }
 
-function handleToggleStatus(event) {
+async function handleToggleStatus(event) {
     const todo = findTodoFromEvent(event)
     if (!todo) return
 
     todo.completed = !todo.completed
-    renderAll()
+    await updateTask(todo.id, todo)
+    loadTasks()
 }
 
 function handleEditTodo(event) {
@@ -93,25 +106,24 @@ taskBoard.addEventListener('click', (event) => {
     }
 })
 
-form.addEventListener('submit', (event) => {
+form.addEventListener('submit', async (event) => {
     event.preventDefault()
 
     const formData = new FormData(form)
+    const description = formData.get('task')
 
     if (editingTodo) {
         editingTodo.description = formData.get('task')
+        await updateTask(editingTodo.id, editingTodo)
+        loadTasks()
+        toggleForm()
+        resetFormState()
     } else {
-        const todo = {
-            id: Date.now(),
-            description: formData.get('task'),
-            completed: false
-        }
-        todos.push(todo)
+        await createTask(description)
+        loadTasks()
+        toggleForm()
+        resetFormState()
     }
-
-    renderAll()
-    toggleForm()
-    resetFormState()
 })
 
 function renderTodoListItem(todo) {
@@ -164,7 +176,6 @@ function renderTodoListItem(todo) {
 }
 
 function renderAll() {
-    localStorage.setItem('todos', JSON.stringify(todos))
     todosList.innerHTML = ''
     todos.forEach(todo => {
         const element = renderTodoListItem(todo)
@@ -172,4 +183,4 @@ function renderAll() {
     })
 }
 
-renderAll()
+loadTasks()
