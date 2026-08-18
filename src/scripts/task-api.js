@@ -1,8 +1,13 @@
 const API_URL = "http://localhost:4242/tasks"
 
 export async function getTasks() {
-    const response = await fetch(API_URL)
-    return response.json()
+    try {
+        const response = await fetch(API_URL)
+        return response.json()
+    } catch (error) {
+        alert('Alguma coisa deu errado!')
+        return []
+    }
 }
 
 export async function createTask(description) {
@@ -30,4 +35,10 @@ export async function updateTask(id, data) {
     })
 
     return response.json()
+}
+
+export async function deleteTask(id) {
+    return fetch(`${API_URL}/${id}`, {
+        method: 'DELETE'
+    })
 }

@@ -1,4 +1,4 @@
-import { getTasks, createTask, updateTask } from "./task-api.js"
+import { getTasks, createTask, updateTask, deleteTask } from "./task-api.js"
 
 let todos = []
 
@@ -20,6 +20,7 @@ const todosList = document.querySelector('.task-list')
 const menu = document.querySelector('.task-menu')
 const buttonAddTask = document.querySelector('.add-task-button')
 const buttonDeleteTask = document.querySelector('#btn-delete')
+const currentTaskName = document.querySelector('.current-task__name')
 
 let editingTodo = null
 
@@ -41,25 +42,29 @@ function handleCancelForm() {
     form.reset()
 }
 
-function handleDeleteTodo() {
+async function handleDeleteTodo() {
     if (editingTodo) {
-        todos = todos.filter(t => t !== editingTodo)
+        await deleteTask(editingTodo.id)   
+        resetFormState()
+        toggleForm()
+        loadTasks()
     }
-    resetFormState()
-    toggleForm()
-    renderAll()
 }
 
-function handleClearCompleted() {
+async function handleClearCompleted() {
     menu.open = false
-    todos = todos.filter(t => !t.completed)
-    renderAll()
+    await Promise.all(todos.filter(t => t.completed).map(t => {
+        return deleteTask(t.id)
+    }))
+    loadTasks()
 }
 
-function handleClearAll() {
+async function handleClearAll() {
     menu.open = false
-    todos = []
-    todosList.innerHTML = ''
+    await Promise.all(todos.map(t => { //espera finalizar
+        return deleteTask(t.id)
+    }))
+    loadTasks()
 }
 
 function findTodoFromEvent(event) {
@@ -97,6 +102,14 @@ const actions = {
     'clear-all': handleClearAll,
     'toggle-status': handleToggleStatus,
     'edit-todo': handleEditTodo,
+    'set-current': handleSetCurrent,
+}
+
+function handleSetCurrent(event) {
+    const todo = findTodoFromEvent(event)
+    if (!todo) return
+
+    currentTaskName.textContent = todo.description
 }
 
 taskBoard.addEventListener('click', (event) => {
@@ -130,6 +143,8 @@ function renderTodoListItem(todo) {
     const listItem = document.createElement('li')
 
     listItem.classList.add('task-list__item')
+    listItem.dataset.todoId = todo.id
+    listItem.dataset.action = 'set-current'
 
     if (todo.completed) {
         listItem.classList.add('task-list__item--complete')
